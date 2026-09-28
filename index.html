@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>워드프로세서 기출 채점</title>
+<style>
+:root{
+  --bg:#F3F4F8; --card:#FFFFFF; --ink:#1B2440; --ink2:#5A6478; --line:#D5DAE5;
+  --blue:#2A52D0; --onblue:#FFFFFF; --red:#C9302A; --redbg:#FBE5E3; --green:#1C7C54; --greenbg:#DDF2E7;
+  --amber:#8A5A00; --amberbg:#FFF0BF; --bubble:#1B2440; --onbubble:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161F; --card:#1B2130; --ink:#E9ECF4; --ink2:#A2ABBD; --line:#333C50;
+    --blue:#8AA8FF; --onblue:#10162A; --red:#FF8F87; --redbg:#3A1F1F; --green:#6FD6A4; --greenbg:#173528;
+    --amber:#FFD666; --amberbg:#3F3208; --bubble:#E9ECF4; --onbubble:#12161F;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161F; --card:#1B2130; --ink:#E9ECF4; --ink2:#A2ABBD; --line:#333C50;
+  --blue:#8AA8FF; --onblue:#10162A; --red:#FF8F87; --redbg:#3A1F1F; --green:#6FD6A4; --greenbg:#173528;
+  --amber:#FFD666; --amberbg:#3F3208; --bubble:#E9ECF4; --onbubble:#12161F;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:520px;margin:0 auto;padding:12px 14px 180px}
+.top{display:flex;justify-content:space-between;align-items:center;min-height:44px}
+.who{color:var(--ink2);font-size:14px}
+h1{font-size:22px;line-height:1.3;margin:8px 0 4px}
+h2{font-size:17px;margin:22px 0 8px}
+h3{font-size:16px;margin:0}
+.sub{margin:0 0 12px;color:var(--ink2);font-size:14px}
+.link{background:none;border:0;color:var(--blue);padding:10px 0;min-height:44px;font-size:15px;cursor:pointer}
+.btn{display:block;width:100%;min-height:50px;border:0;border-radius:10px;background:var(--blue);color:var(--onblue);font-weight:700;cursor:pointer;padding:0 16px}
+.btn.sub2{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn+.btn{margin-top:8px}
+.btn:disabled{opacity:.5}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 10px}
+.card.off{opacity:.55}
+.login{max-width:360px;margin:9vh auto 0;padding:0 18px}
+.login label{display:block;font-weight:700;font-size:14px;margin:16px 0 4px}
+.login input{width:100%;min-height:48px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:18px}
+.err{color:var(--red);font-size:14px;min-height:1.4em;margin:10px 0 0}
+.ex{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ex b{font-size:17px}
+.ex small{display:block;color:var(--ink2)}
+.ex .btns{display:flex;gap:6px;flex-shrink:0}
+.ex .btns .btn{width:auto;min-height:44px;padding:0 14px;margin:0}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;display:flex;gap:6px;background:var(--bg);padding:8px 0}
+.tabs button{flex:1;min-height:52px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;line-height:1.25;font-size:13px;padding:4px 2px}
+.tabs button b{display:block;font-size:15px}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sect{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--line)}
+.row:nth-child(5n){border-bottom:2px solid var(--ink2)}
+.row:last-child{border-bottom:0}
+.row .n{width:30px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.row .opts{flex:1;display:flex;justify-content:space-around}
+.o{width:46px;height:46px;border-radius:50%;border:2px solid var(--ink2);background:transparent;font-size:19px;cursor:pointer;padding:0;line-height:1}
+.o[aria-pressed=true]{background:var(--bubble);color:var(--onbubble);border-color:var(--bubble)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+.bar .in{max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.bar .cnt{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.bar .btn{margin:0}
+.bar .ask{flex:1;font-size:14px}
+.bar .two{display:flex;gap:8px;margin-top:8px}
+.bar .two .btn{min-height:44px;margin:0}
+.score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.avg{font-size:44px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.avg small{font-size:20px;font-weight:700}
+.vd{font-weight:700;padding:2px 12px;border-radius:99px;font-size:14px}
+.vd.ok{background:var(--greenbg);color:var(--green)}
+.vd.mid{background:var(--amberbg);color:var(--amber)}
+.vd.bad{background:var(--redbg);color:var(--red)}
+.subj{display:grid;grid-template-columns:1fr 46px;gap:2px 10px;align-items:center;margin-top:12px;font-size:14px}
+.subj .tr{grid-column:1/3;height:10px;border-radius:5px;background:var(--line);overflow:hidden;position:relative;margin-bottom:6px}
+.subj .tr i{display:block;height:100%;background:var(--ink)}
+.subj .tr i.f{background:var(--red)}
+.subj .tr b{position:absolute;top:0;bottom:0;width:2px;background:var(--card)}
+.subj .sv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.headline{font-size:17px;line-height:1.5;margin:0}
+.cc{border-left:5px solid var(--red)}
+.cc h3{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.cc .c{font-size:13px;font-weight:400;color:var(--ink2);white-space:nowrap}
+.cc .qs{margin:6px 0 2px;color:var(--ink2);font-size:14px}
+.cc .pg{margin:6px 0 0;font-size:18px;font-weight:800}
+.cc .pg.none{font-size:15px;font-weight:700;color:var(--amber)}
+.cc ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--ink2)}
+.cc .note{margin:6px 0 0;font-size:13px;color:var(--amber)}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{white-space:nowrap}
+td.c{text-align:center;white-space:nowrap}
+textarea.send{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:13px;line-height:1.5;resize:vertical}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>const DATA = {"rule":{"passAvg":60,"passMin":40},"subjects":[{"name":"워드프로세싱 일반","from":1,"to":20},{"name":"PC 운영체제","from":21,"to":40},{"name":"컴퓨터와 정보 활용","from":41,"to":60}],"exams":{"1":{"title":"2025년 상시 03","key":"442144112132232111334333422142134314313413214224332242133231","map":["C05","C01","C02","C03","C09","C12","C14","C01","C10","C04","C15","C08","C12","C13","C01","C10","C12","C11","C06","C15","C21","C22","C23","C24","C21","C21","C25","C26","C21","C27","C28","C24","C29","C07","C23","C27","C30","C29","C30","C31","C41","C42","C44","C46","C43","C47","C48","C49","C50","C45","C51","C52","C53","C54","C46","C45","C27","C55","C56","C45"],"cov":"212211111202221112101112101011111211221120210220222222212020"}},"concepts":{"C01":{"n":"워드프로세서의 기능(입력·저장·표시)","s":1,"p":[["15","워드프로세서의 정의 및 특징"],["16","02 워드프로세서의 기능"]]},"C02":{"n":"워드프로세서 기본 용어","s":1,"p":[["S1","3. 워드프로세서 기본 용어"],["15","워드프로세서의 정의 및 특징"]]},"C03":{"n":"한글 코드·유니코드","s":1,"p":[["15","한글 코드"],["S1","1. KS X 1005-1(유니코드) 상세"]]},"C04":{"n":"찾기·바꾸기","s":1,"p":[["S1","4·5. 찾기·바꾸기 기능 상세"],["16","편집 기능"]]},"C05":{"n":"매크로·메일 머지","s":1,"p":[["16","매크로와 메일 머지"],["S2","8. 매크로의 구분, 15. 메일 머지"]]},"C06":{"n":"스타일","s":1,"p":[["16","편집 기능(스타일)"]]},"C07":{"n":"인쇄 기능","s":1,"p":[["S2","7. 인쇄 기능 상세"],["16","출력·자동화·협업 기능"]]},"C08":{"n":"교정부호","s":1,"p":[["17","04 교정부호"]]},"C09":{"n":"문서의 분류·구성·작성 원칙","s":1,"p":[["17","문서의 분류, 올바른 문서 작성 원칙, 사외문서의 구성"]]},"C10":{"n":"문서 관리 절차·원칙","s":1,"p":[["17","05 문서 관리"],["18","문서 파일링"]]},"C11":{"n":"문서 분류(정리)법","s":1,"p":[["18","문서 분류(정리)법"]]},"C12":{"n":"전자문서·전자결재","s":1,"p":[["18","전자문서 관리 시스템, 전자결재 시스템"],["19","공문서의 성립 및 효력 발생"],["S2","10. EDI, 11. 전자서명"]]},"C13":{"n":"공문서의 작성·발신","s":1,"p":[["19","공문서의 성립·발신·구성"],["20","공문서 처리의 원칙"]]},"C14":{"n":"디지털 저작권 관리(DRM·DOI)","s":1,"p":[["35","최신 기술의 활용(DRM)"]]},"C15":{"n":"한글 맞춤법·문장 작성법","s":1,"p":[]},"C21":{"n":"장치 관리(장치 관리자·Bluetooth 및 장치)","s":2,"p":[["23","07 장치 및 앱 관리, 장치 관리"]]},"C22":{"n":"전원·절전 설정","s":2,"p":[["21","부팅 및 전원 기능"],["23","전원·접근성·계정·개인정보"]]},"C23":{"n":"웹 브라우저(Edge·Chrome)","s":2,"p":[["S4","7. 웹 브라우저"]]},"C24":{"n":"로그인 옵션·사용자 계정","s":2,"p":[["S4","11. Windows Hello"],["23","전원·접근성·계정·개인정보(계정)"]]},"C25":{"n":"개인 설정(배경·테마·색)","s":2,"p":[["S4","6. 개인 설정"]]},"C26":{"n":"공용 폴더·파일 공유","s":2,"p":[]},"C27":{"n":"방화벽·Windows 보안","s":2,"p":[["25","방화벽 및 네트워크 보호"],["23","업데이트 및 보안"]]},"C28":{"n":"시작 메뉴·작업 표시줄","s":2,"p":[["21","02 바탕 화면 활용"]]},"C29":{"n":"바로 가기 키","s":2,"p":[["21","주요 바로 가기 키"],["S3","2. 바로 가기 키 추가분"]]},"C30":{"n":"메모장·스티커 메모","s":2,"p":[["22","메모장"],["23","기타 앱과 도구(스티커 메모)"]]},"C31":{"n":"네트워크 설정","s":2,"p":[["24","네트워크 연결 설정"]]},"C41":{"n":"기억 장치(ROM·RAM·캐시)","s":3,"p":[["27","주기억 장치, 고성능 기억 장치"],["S6","3. 캐시메모리 개념 보완"]]},"C42":{"n":"입출력 장치·인터페이스(USB 등)","s":3,"p":[]},"C43":{"n":"부팅·디스크 구조(MBR 등)","s":3,"p":[]},"C44":{"n":"전자우편 프로토콜","s":3,"p":[["36","09 전자우편 사용하기"]]},"C45":{"n":"인터넷 프로토콜(TCP/IP·OSI 계층)","s":3,"p":[["32","TCP/IP 프로토콜 구조"],["S7","14. OSI 7계층 순서 및 계층별 프로토콜"]]},"C46":{"n":"인터넷 프로그래밍 언어","s":3,"p":[["32","인터넷 프로그래밍 언어"],["S6","8. 프로그래밍 언어 분류"]]},"C47":{"n":"최신 컴퓨팅 기술(클라우드·그리드 등)","s":3,"p":[["35","최신 기술의 활용"]]},"C48":{"n":"바이러스 예방","s":3,"p":[["29","바이러스 예방 방법"],["33","악성 프로그램"]]},"C49":{"n":"핀테크·ICT 신기술 용어","s":3,"p":[]},"C50":{"n":"보안 위협(스니핑·스푸핑 등)","s":3,"p":[["33","프로토콜의 취약점 공격"],["34","프로토콜의 취약점 공격(이어서)"]]},"C51":{"n":"멀티미디어(하이퍼텍스트·하이퍼미디어)","s":3,"p":[["29","05 멀티미디어 활용하기"]]},"C52":{"n":"데이터 구성 단위","s":3,"p":[["26","데이터 구성 단위"],["S6","2. 데이터 단위 크기순 정리"]]},"C53":{"n":"운영체제의 분류(처리 방식)","s":3,"p":[["28","운영 체제의 분류"]]},"C54":{"n":"컴퓨터 발전사·단위 순서","s":3,"p":[["26","컴퓨터 역사, 세대별 분류"],["S6","1. 속도 단위 순서"]]},"C55":{"n":"데이터 변환(PCM 등)","s":3,"p":[]},"C56":{"n":"그래픽 파일 형식","s":3,"p":[["30","그래픽/이미지"]]}},"examCount":10,"roster":[{"id":1,"h":"01kxnkf"},{"id":2,"h":"17gs2hm"},{"id":3,"h":"0jzqj5y"},{"id":4,"h":"0btvp8p"},{"id":5,"h":"0lewsq6"},{"id":6,"h":"1qh66tw"},{"id":7,"h":"1fziyyb"},{"id":8,"h":"01kntfj"},{"id":9,"h":"0l0rc77"}]};</script>
+<script>/* 공통 코어: 학생용과 교사용이 같은 코드를 씁니다 (채점, 결과 코드, 분석) */
+const WPQ = (function () {
+  'use strict';
+  const D = DATA;
+  const R = D.rule;
+  const r1 = function (n) { return Math.round(n * 10) / 10; };
+  const fmt = function (n) { return String(r1(n)); };
+  const mean = function (a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : 0; };
+  const sd = function (a) {
+    if (a.length < 2) return 0;
+    const m = mean(a);
+    return Math.sqrt(mean(a.map(function (v) { return (v - m) * (v - m); })));
+  };
+  const keyOf = function (s) { return String(s).trim().toLowerCase(); };
+
+  /* ---------- 해시 / 결과 코드 ---------- */
+  function fnv(s) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+    return h >>> 0;
+  }
+  function b36(n, len) { return n.toString(36).padStart(len || 0, '0'); }
+  function checksum(payload) { return b36(fnv('wpq|' + payload), 7); }
+  function pinHash(id, pin) { return b36(fnv('pin|' + id + '|' + pin + '|wpq'), 7); }
+
+  function encode(id, exam, tsMs, answers) {
+    const payload = ['WPQ1', id, exam, b36(Math.floor(tsMs / 1000)), answers].join('|');
+    return payload + '|' + checksum(payload);
+  }
+  /* 글 전체에서 결과 코드를 모두 찾는다 (카톡 메시지 통째로 붙여넣기 가능) */
+  function scan(text) {
+    const re = /WPQ1\|(\d{1,4})\|(\d{1,3})\|([0-9a-z]{4,10})\|([0-4]{60})\|([0-9a-z]{7})/g;
+    const items = [];
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const payload = 'WPQ1|' + m[1] + '|' + m[2] + '|' + m[3] + '|' + m[4];
+      items.push({
+        code: m[0], sid: +m[1], exam: +m[2], ts: parseInt(m[3], 36) * 1000,
+        answers: m[4], valid: checksum(payload) === m[5]
+      });
+    }
+    const total = (String(text).match(/WPQ1\|/g) || []).length;
+    return { items: items, broken: Math.max(0, total - items.length) };
+  }
+
+  /* ---------- 학습지 쪽수 표시 ---------- */
+  function refLabel(r) { return r.charAt(0) === 'S' ? '보충 ' + r.slice(1) + '쪽' : r + '쪽'; }
+  function pagesText(info) {
+    if (!info || !info.p.length) return '';
+    const seen = {}, out = [];
+    info.p.forEach(function (x) { if (!seen[x[0]]) { seen[x[0]] = 1; out.push(refLabel(x[0])); } });
+    return out.join(', ');
+  }
+  function qsText(qs, noExam) {
+    const g = {};
+    qs.forEach(function (x) { (g[x.examNo] = g[x.examNo] || []).push(x.q); });
+    return Object.keys(g).sort(function (a, b) { return a - b; }).map(function (no) {
+      const list = g[no].sort(function (a, b) { return a - b; }).map(function (q) { return q + '번'; }).join(', ');
+      return noExam ? list : no + '회차 ' + list;
+    }).join(' / ');
+  }
+
+  /* ---------- 채점 ---------- */
+  function analyze(examNo, answers) {
+    const ex = D.exams[examNo];
+    const perQ = [];
+    for (let i = 0; i < 60; i++) {
+      const a = +answers.charAt(i), k = +ex.key.charAt(i);
+      perQ.push({ q: i + 1, ans: a, key: k, ok: a === k, blank: a === 0, concept: ex.map[i], cov: +ex.cov.charAt(i) });
+    }
+    const subj = D.subjects.map(function (s) {
+      let c = 0;
+      for (let q = s.from; q <= s.to; q++) if (perQ[q - 1].ok) c++;
+      const n = s.to - s.from + 1;
+      return { name: s.name, correct: c, total: n, score: Math.round(c / n * 100) };
+    });
+    const scores = subj.map(function (s) { return s.score; });
+    const avg = r1(mean(scores));
+    const fails = [];
+    scores.forEach(function (s, i) { if (s < R.passMin) fails.push(i); });
+    return {
+      examNo: examNo, title: ex.title, perQ: perQ, subj: subj, scores: scores, avg: avg, fails: fails,
+      pass: avg >= R.passAvg && fails.length === 0,
+      wrongCount: perQ.filter(function (p) { return !p.ok; }).length,
+      blankCount: perQ.filter(function (p) { return p.blank; }).length
+    };
+  }
+
+  /* 오답이 많은 개념 순위 (여러 회차 합산 가능) */
+  function conceptRank(list) {
+    const m = {};
+    list.forEach(function (it) {
+      it.perQ.forEach(function (p) {
+        const c = m[p.concept] = m[p.concept] || { id: p.concept, total: 0, wrong: 0, qs: [] };
+        c.total++;
+        if (!p.ok) { c.wrong++; c.qs.push({ examNo: it.examNo, q: p.q, ans: p.ans, key: p.key, cov: p.cov }); }
+      });
+    });
+    return Object.keys(m).map(function (k) { return m[k]; })
+      .filter(function (c) { return c.wrong > 0; })
+      .sort(function (a, b) { return b.wrong - a.wrong || (b.wrong / b.total) - (a.wrong / a.total) || a.id.localeCompare(b.id); })
+      .map(function (c) { c.info = D.concepts[c.id]; return c; });
+  }
+
+  /* ---------- 학생용 피드백 (한 번 푼 결과) ---------- */
+  function verdictOf(a) {
+    if (a.fails.length) return { cls: 'bad', label: '과락 있음' };
+    if (a.pass) return { cls: 'ok', label: '합격권' };
+    return { cls: 'mid', label: '합격선 미달' };
+  }
+  function studentFeedback(a) {
+    const rank = conceptRank([{ examNo: a.examNo, perQ: a.perQ }]);
+    let headline;
+    if (a.wrongCount === 0) headline = '만점이에요. 아주 잘했어요!';
+    else if (a.fails.length) {
+      headline = a.fails.map(function (i) { return D.subjects[i].name + ' ' + a.scores[i] + '점'; }).join(', ') +
+        '이(가) 과락선(' + R.passMin + '점) 아래예요. 이 과목의 개념부터 먼저 잡아 보세요.';
+    } else if (a.pass) {
+      const m = r1(a.avg - R.passAvg);
+      headline = m < 5
+        ? '평균 ' + fmt(a.avg) + '점으로 합격선을 넘었지만 여유가 ' + fmt(m) + '점뿐이에요.'
+        : '평균 ' + fmt(a.avg) + '점으로 합격선보다 ' + fmt(m) + '점 위예요.';
+    } else {
+      headline = '평균 ' + fmt(a.avg) + '점, 합격선(' + R.passAvg + '점)까지 ' + fmt(R.passAvg - a.avg) + '점 남았어요.';
+    }
+    return { headline: headline, top: rank.slice(0, 3), more: Math.max(0, rank.length - 3), all: rank };
+  }
+  function shareText(id, a, ts, code) {
+    const fb = studentFeedback(a);
+    const v = verdictOf(a).label;
+    const lines = [
+      '[워드프로세서 기출 결과]',
+      id + '번 / ' + a.examNo + '회차 (' + a.title + ')',
+      a.subj.map(function (s, i) { return (i + 1) + '과목 ' + s.score + '점'; }).join(', ') + ' → 평균 ' + fmt(a.avg) + '점 (' + v + ')'
+    ];
+    if (fb.top.length) {
+      lines.push('먼저 볼 개념: ' + fb.top.map(function (c) {
+        const p = pagesText(c.info);
+        return c.info.n + (p ? '(' + p + ')' : '');
+      }).join(', '));
+    }
+    lines.push('', '아래 코드는 지우지 말고 그대로 보내 주세요.', code);
+    return lines.join('\n');
+  }
+
+  /* ---------- 교사용: 학생별 모델 ---------- */
+  function expectedScore(list) {
+    if (list.length < 3) return { n: list.length, need: 3 - list.length, ok: false };
+    const use = list.slice(-5);
+    const avgs = use.map(function (x) { return x.avg; });
+    const c = mean(avgs), band = Math.max(4, Math.round(sd(avgs)));
+    const low = Math.max(0, Math.round(c - band)), high = Math.min(100, Math.round(c + band));
+    const subj = D.subjects.map(function (s, i) {
+      const v = use.map(function (x) { return x.scores[i]; });
+      const m = mean(v), b = Math.max(5, Math.round(sd(v)));
+      const lo = Math.max(0, Math.round(m - b));
+      return { name: s.name, center: Math.round(m), low: lo, high: Math.min(100, Math.round(m + b)),
+        risk: lo >= 50 ? '낮음' : lo >= R.passMin ? '주의' : '위험' };
+    });
+    const anyRisk = subj.some(function (s) { return s.risk === '위험'; });
+    let verdict;
+    if (low >= R.passAvg && !anyRisk) verdict = '합격 가능성 높음';
+    else if (high < R.passAvg) verdict = '합격선 미달 예상';
+    else verdict = '합격선 경계';
+    return { ok: true, n: use.length, center: Math.round(c), low: low, high: high, subj: subj, verdict: verdict, anyRisk: anyRisk };
+  }
+
+  function secondRound(exams) {
+    const multi = exams.filter(function (e) { return e.rounds.length >= 2; });
+    if (!multi.length) return null;
+    const persist = [], fixed = [], regress = [];
+    multi.forEach(function (e) {
+      const f = e.rounds[0].res.perQ, l = e.rounds[e.rounds.length - 1].res.perQ;
+      for (let i = 0; i < 60; i++) {
+        const pf = f[i], pl = l[i];
+        const rec = { examNo: e.examNo, q: pf.q, concept: pf.concept, first: pf.ans, last: pl.ans, key: pf.key, cov: pf.cov };
+        if (!pf.ok && !pl.ok) { rec.same = pf.ans === pl.ans && pf.ans !== 0; persist.push(rec); }
+        else if (!pf.ok && pl.ok) fixed.push(rec);
+        else if (pf.ok && !pl.ok) regress.push(rec);
+      }
+    });
+    const g = {};
+    persist.forEach(function (x) {
+      const c = g[x.concept] = g[x.concept] || { id: x.concept, info: D.concepts[x.concept], qs: [], sameCount: 0 };
+      c.qs.push(x);
+      if (x.same) c.sameCount++;
+    });
+    const persistConcepts = Object.keys(g).map(function (k) { return g[k]; })
+      .sort(function (a, b) { return b.qs.length - a.qs.length || b.sameCount - a.sameCount || a.id.localeCompare(b.id); });
+    return {
+      multi: multi.map(function (e) {
+        const f = e.rounds[0].res, l = e.rounds[e.rounds.length - 1].res;
+        return { examNo: e.examNo, title: e.title, rounds: e.rounds.length, firstAvg: f.avg, lastAvg: l.avg, firstWrong: f.wrongCount, lastWrong: l.wrongCount };
+      }),
+      persist: persist, fixed: fixed, regress: regress, persistConcepts: persistConcepts
+    };
+  }
+
+  /* attempts: [{code,sid,exam,ts,answers}] */
+  function buildModel(sid, attempts, examNos) {
+    const mine = attempts.filter(function (a) {
+      return a.sid === sid && D.exams[a.exam] && (!examNos || examNos.indexOf(a.exam) >= 0);
+    }).sort(function (a, b) { return a.ts - b.ts; });
+    const by = {};
+    mine.forEach(function (a) { (by[a.exam] = by[a.exam] || []).push(a); });
+    const exams = Object.keys(by).map(Number).sort(function (a, b) { return a - b; }).map(function (no) {
+      return {
+        examNo: no, title: D.exams[no].title,
+        rounds: by[no].map(function (a, i) { return { k: i + 1, ts: a.ts, code: a.code, res: analyze(no, a.answers) }; })
+      };
+    });
+    const weak = conceptRank(exams.map(function (e) { return { examNo: e.examNo, perQ: e.rounds[0].res.perQ }; }));
+    const expected = expectedScore(exams.map(function (e) {
+      const r = e.rounds[0].res; return { examNo: e.examNo, avg: r.avg, scores: r.scores };
+    }));
+    return { sid: sid, exams: exams, weak: weak, expected: expected, second: secondRound(exams) };
+  }
+
+  function reportParts(m, name) {
+    const P = { name: name, has: m.exams.length > 0, m: m };
+    if (!P.has) return P;
+    const firsts = m.exams.map(function (e) { return e.rounds[0].res; });
+    const avgs = firsts.map(function (r) { return r.avg; });
+    P.firstSummary = '처음 푼 ' + firsts.length + '개 회차의 평균은 ' + fmt(mean(avgs)) + '점이에요.' +
+      (firsts.length > 1 ? ' (최고 ' + fmt(Math.max.apply(null, avgs)) + '점, 최저 ' + fmt(Math.min.apply(null, avgs)) + '점)' : '');
+    P.weak = m.weak.slice(0, 5);
+    if (m.second) {
+      const s = m.second;
+      const sameN = s.persist.filter(function (x) { return x.same; }).length;
+      let h = '2바퀴 기록이 있는 ' + s.multi.length + '개 회차에서 ' + s.fixed.length + '문항을 고쳤어요.';
+      if (s.persist.length) h += ' 다만 ' + s.persist.length + '문항은 저번에도 틀렸는데 또 틀렸어요.';
+      else h += ' 저번에 틀린 문항은 모두 고쳤어요.';
+      if (s.regress.length) h += ' 이번에 새로 틀린 문항도 ' + s.regress.length + '개 있어요.';
+      P.secondHeadline = h;
+      P.sameN = sameN;
+    }
+    const planSrc = (m.second && m.second.persistConcepts.length) ? m.second.persistConcepts : m.weak;
+    P.plan = planSrc.slice(0, 3);
+    return P;
+  }
+
+  function reportPlain(P, dateStr) {
+    if (!P.has) return P.name + ' 학생은 아직 제출한 기록이 없어요.';
+    const m = P.m, L = [];
+    L.push('[' + P.name + ' 학생 워드프로세서 학습 피드백] ' + dateStr, '');
+    L.push('■ 점수 (처음 푼 기록)');
+    m.exams.forEach(function (e) {
+      const f = e.rounds[0].res, last = e.rounds[e.rounds.length - 1].res;
+      let t = e.examNo + '회차 ' + f.subj.map(function (s) { return s.score; }).join('/') + ' → 평균 ' + fmt(f.avg) + '점 (' + verdictOf(f).label + ')';
+      if (e.rounds.length > 1) t += ' / 2바퀴 평균 ' + fmt(last.avg) + '점 (' + (last.avg - f.avg >= 0 ? '+' : '') + fmt(last.avg - f.avg) + ')';
+      L.push(t);
+    });
+    L.push('', '■ 실전 예상 점수');
+    if (m.expected.ok) L.push(m.expected.low + '~' + m.expected.high + '점 → ' + m.expected.verdict + (m.expected.anyRisk ? ' (과락 주의 과목 있음)' : ''));
+    else L.push('처음 푼 기록이 3회차 이상 쌓이면 알려 줄게요. (지금 ' + m.expected.n + '회차)');
+    L.push('', '■ 부족한 개념');
+    P.weak.forEach(function (c, i) {
+      const p = pagesText(c.info);
+      L.push((i + 1) + '. ' + c.info.n + ' - ' + qsText(c.qs) + (p ? ' / 학습지 ' + p : ' / 학습지에 없는 내용(선생님께 질문)'));
+    });
+    if (m.second) {
+      L.push('', '■ 2바퀴 분석', P.secondHeadline);
+      m.second.persistConcepts.slice(0, 5).forEach(function (c) {
+        const p = pagesText(c.info);
+        L.push('- 저번에도 틀렸는데 또 틀림: ' + c.info.n + ' (' + qsText(c.qs) + ')' + (c.sameCount ? ' - 지난번과 같은 보기를 골랐어요' : '') + (p ? ' / 학습지 ' + p : ''));
+      });
+    }
+    L.push('', '■ 이번 주 공부 순서');
+    P.plan.forEach(function (c, i) {
+      const p = pagesText(c.info);
+      L.push((i + 1) + '. ' + c.info.n + (p ? ' → 학습지 ' + p : ' → 선생님께 질문'));
+    });
+    return L.join('\n');
+  }
+
+  return {
+    D: D, r1: r1, fmt: fmt, mean: mean, keyOf: keyOf,
+    pinHash: pinHash, checksum: checksum, encode: encode, scan: scan,
+    refLabel: refLabel, pagesText: pagesText, qsText: qsText,
+    analyze: analyze, conceptRank: conceptRank, verdictOf: verdictOf, studentFeedback: studentFeedback, shareText: shareText,
+    expectedScore: expectedScore, secondRound: secondRound, buildModel: buildModel, reportParts: reportParts, reportPlain: reportPlain
+  };
+})();
+</script>
+<script>
+'use strict';
+const S = { view: 'login', user: null, examNo: null, ans: [], tab: 0, res: null, blankAsk: false };
+const $ = function (id) { return document.getElementById(id); };
+const CIRC = '①②③④';
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2600);
+}
+
+/* ---------- 저장 (이 기기에만 있는 임시 저장) ---------- */
+function draftKey(n) { return 'wpq_draft_' + S.user.id + '_' + n; }
+function resKey() { return 'wpq_res_' + S.user.id; }
+function loadDraft(n) { const v = lsGet(draftKey(n)); return v && /^[0-4]{60}$/.test(v) ? v : null; }
+function loadSaved() { try { return JSON.parse(lsGet(resKey()) || '{}') || {}; } catch (e) { return {}; } }
+function saveResult(n, ts, answers) { const m = loadSaved(); m[n] = { ts: ts, ans: answers }; lsSet(resKey(), JSON.stringify(m)); }
+
+/* ---------- 화면 전환 ---------- */
+function go(v) { S.view = v; render(); window.scrollTo(0, 0); }
+function render() { ({ login: vLogin, home: vHome, input: vInput, result: vResult })[S.view](); }
+
+/* ---------- 로그인 ---------- */
+function vLogin(msg) {
+  $('app').innerHTML =
+    '<form class="login" id="lf"><h1>워드프로세서 기출 채점</h1><p class="sub">번호와 비밀번호를 넣고 들어와요.</p>' +
+    '<label for="uid">번호</label><input id="uid" inputmode="numeric" autocomplete="username" maxlength="3">' +
+    '<label for="upw">비밀번호 (숫자 4자리)</label><input id="upw" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8">' +
+    '<button class="btn" type="submit" style="margin-top:20px">들어가기</button><p class="err" id="err">' + esc(msg || '') + '</p></form>';
+}
+function doLogin() {
+  const id = parseInt($('uid').value, 10), pin = $('upw').value.trim();
+  const u = DATA.roster.filter(function (r) { return r.id === id; })[0];
+  if (!u || WPQ.pinHash(id, pin) !== u.h) { $('err').textContent = '번호 또는 비밀번호가 맞지 않아요.'; return; }
+  S.user = { id: id };
+  go('home');
+}
+function logout() { S.user = null; S.res = null; go('login'); }
+
+/* ---------- 처음 화면: 회차 목록 ---------- */
+function vHome() {
+  const saved = loadSaved();
+  let h = '<div class="wrap"><div class="top"><span class="who">' + S.user.id + '번 학생</span><button class="link" data-a="logout">로그아웃</button></div>' +
+    '<h1>어느 회차를 풀었나요?</h1><p class="sub">시험지를 풀고 고른 답을 입력하면 바로 채점해 줘요.</p>';
+  for (let n = 1; n <= DATA.examCount; n++) {
+    const ex = DATA.exams[n];
+    if (!ex) { h += '<div class="card off"><div class="ex"><div><b>' + n + '회차</b><small>준비 중이에요</small></div></div></div>'; continue; }
+    const hasDraft = !!loadDraft(n);
+    h += '<div class="card"><div class="ex"><div><b>' + n + '회차</b><small>' + esc(ex.title) + '</small></div><div class="btns">' +
+      (saved[n] ? '<button class="btn sub2" data-a="view" data-n="' + n + '">지난 결과</button>' : '') +
+      '<button class="btn" data-a="start" data-n="' + n + '">' + (hasDraft ? '이어서 입력' : '풀기') + '</button></div></div></div>';
+  }
+  $('app').innerHTML = h + '</div>';
+}
+
+/* ---------- 답안 입력 ---------- */
+function startExam(n, fresh) {
+  S.examNo = n; S.tab = 0; S.blankAsk = false;
+  const d = fresh ? null : loadDraft(n);
+  S.ans = d ? d.split('').map(Number) : new Array(60).fill(0);
+  go('input');
+}
+function vInput() {
+  const ex = DATA.exams[S.examNo];
+  let rows = '';
+  DATA.subjects.forEach(function (s, si) {
+    rows += '<div class="sect" data-s="' + si + '">';
+    for (let q = s.from; q <= s.to; q++) {
+      rows += '<div class="row"><span class="n">' + q + '</span><div class="opts">';
+      for (let o = 1; o <= 4; o++) {
+        rows += '<button type="button" class="o" data-a="pick" data-q="' + q + '" data-o="' + o + '" aria-pressed="false" aria-label="' + q + '번 문제 ' + o + '번">' + CIRC.charAt(o - 1) + '</button>';
+      }
+      rows += '</div></div>';
+    }
+    rows += '</div>';
+  });
+  $('app').innerHTML =
+    '<div class="wrap"><div class="top"><button class="link" data-a="home">← 처음으로</button><span class="who">' + S.user.id + '번 학생</span></div>' +
+    '<h1>' + S.examNo + '회차 답안 입력</h1><p class="sub">' + esc(ex.title) + '. 시험지에서 고른 번호를 눌러요. 다시 누르면 지워져요.</p>' +
+    '<div class="tabs" role="tablist" id="tabs"></div>' + rows + '</div><div class="bar" id="bar"></div>';
+  paint();
+}
+function filled(from, to) { let c = 0; for (let q = from; q <= to; q++) if (S.ans[q - 1]) c++; return c; }
+function paint() {
+  document.querySelectorAll('.sect').forEach(function (el) { el.hidden = (+el.dataset.s !== S.tab); });
+  document.querySelectorAll('.o').forEach(function (b) {
+    const on = S.ans[+b.dataset.q - 1] === +b.dataset.o;
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  $('tabs').innerHTML = DATA.subjects.map(function (s, si) {
+    const n = s.to - s.from + 1, f = filled(s.from, s.to);
+    return '<button role="tab" data-a="tab" data-t="' + si + '" aria-selected="' + (S.tab === si) + '"><b>' + (si + 1) + '과목</b>' + s.from + '~' + s.to + '번 (' + f + '/' + n + ')</button>';
+  }).join('');
+  paintBar();
+}
+function paintBar() {
+  const total = filled(1, 60), blanks = 60 - total;
+  if (S.blankAsk) {
+    $('bar').innerHTML = '<div class="in"><div class="ask">빈 문항이 ' + blanks + '개 있어요. 그대로 채점할까요? (빈 문항은 틀린 것으로 계산돼요)</div></div>' +
+      '<div class="two" style="max-width:520px;margin:8px auto 0"><button class="btn sub2" data-a="keep">계속 입력</button><button class="btn" data-a="gradeNow">그대로 채점</button></div>';
+  } else {
+    $('bar').innerHTML = '<div class="in"><span class="cnt">입력 ' + total + '/60</span><button class="btn" data-a="grade">채점하기</button></div>';
+  }
+}
+function pick(q, o) {
+  S.ans[q - 1] = S.ans[q - 1] === o ? 0 : o;
+  S.blankAsk = false;
+  lsSet(draftKey(S.examNo), S.ans.join(''));
+  paint();
+}
+function grade(force) {
+  const blanks = S.ans.filter(function (v) { return v === 0; }).length;
+  if (blanks > 0 && !force) { S.blankAsk = true; paintBar(); return; }
+  const answers = S.ans.join(''), ts = Date.now();
+  saveResult(S.examNo, ts, answers);
+  lsDel(draftKey(S.examNo));
+  openResult(S.examNo, ts, answers);
+}
+
+/* ---------- 결과 ---------- */
+function openResult(n, ts, answers) {
+  const a = WPQ.analyze(n, answers);
+  const code = WPQ.encode(S.user.id, n, ts, answers);
+  S.res = { examNo: n, ts: ts, answers: answers, a: a, fb: WPQ.studentFeedback(a), code: code, text: WPQ.shareText(S.user.id, a, ts, code) };
+  go('result');
+}
+function vResult() {
+  const R = S.res, a = R.a, fb = R.fb, v = WPQ.verdictOf(a);
+  let h = '<div class="wrap"><div class="top"><button class="link" data-a="home">← 처음으로</button><span class="who">' + S.user.id + '번 학생</span></div>' +
+    '<h1>' + a.examNo + '회차 채점 결과</h1><p class="sub">' + esc(a.title) + '</p>' +
+    '<div class="card"><div class="score"><div class="avg">' + WPQ.fmt(a.avg) + '<small>점</small></div><span class="vd ' + v.cls + '">' + v.label + '</span></div><div class="subj">';
+  a.subj.forEach(function (s, i) {
+    h += '<span>' + (i + 1) + '과목 ' + esc(s.name) + ' (' + s.correct + '/' + s.total + ')</span><span class="sv">' + s.score + '점</span>' +
+      '<div class="tr"><i class="' + (s.score < DATA.rule.passMin ? 'f' : '') + '" style="width:' + s.score + '%"></i><b style="left:' + DATA.rule.passMin + '%"></b></div>';
+  });
+  h += '</div></div><div class="card"><p class="headline">' + esc(fb.headline) + '</p></div>';
+
+  if (fb.top.length) {
+    h += '<h2>먼저 공부할 개념</h2>';
+    fb.top.forEach(function (c) {
+      const pg = WPQ.pagesText(c.info), none = !c.info.p.length;
+      const noCov = c.qs.filter(function (x) { return x.cov === 0; });
+      h += '<article class="card cc"><h3>' + esc(c.info.n) + '<span class="c">' + c.wrong + '문항 오답</span></h3>' +
+        '<p class="qs">틀린 문항: ' + esc(WPQ.qsText(c.qs, true)) + '</p>' +
+        (none ? '<p class="pg none">학습지에 이 내용이 없어요. 선생님께 질문하세요.</p>'
+              : '<p class="pg">학습지 ' + esc(pg) + '</p><ul>' + c.info.p.map(function (x) { return '<li>' + esc(WPQ.refLabel(x[0])) + ': ' + esc(x[1]) + '</li>'; }).join('') + '</ul>') +
+        (!none && noCov.length ? '<p class="note">※ ' + esc(noCov.map(function (x) { return x.q + '번'; }).join(', ')) + '은(는) 학습지에 설명이 없어요. 선생님께 질문하세요.</p>' : '') +
+        '</article>';
+    });
+    if (fb.more) h += '<p class="sub">이 밖에도 틀린 개념이 ' + fb.more + '개 더 있어요. 아래 틀린 문항 목록에서 확인해요.</p>';
+  }
+
+  const wrong = a.perQ.filter(function (p) { return !p.ok; });
+  if (wrong.length) {
+    h += '<details class="card"><summary>틀린 문항 ' + wrong.length + '개 보기</summary><table><thead><tr><th>번호</th><th>내 답</th><th>정답</th><th>개념</th></tr></thead><tbody>' +
+      wrong.map(function (p) {
+        return '<tr><td class="c">' + p.q + '</td><td class="c">' + (p.blank ? '미응답' : CIRC.charAt(p.ans - 1)) + '</td><td class="c">' + CIRC.charAt(p.key - 1) + '</td><td>' + esc(DATA.concepts[p.concept].n) + '</td></tr>';
+      }).join('') + '</tbody></table></details>';
+  }
+
+  h += '<h2>선생님께 결과 보내기</h2><p class="sub">아래 버튼을 누르고, 카카오톡에서 선생님 채팅방을 골라 보내요. 맨 아래 코드는 지우지 마세요.</p>' +
+    '<button class="btn" data-a="share">카카오톡으로 보내기</button><button class="btn sub2" data-a="copy">내용 복사하기</button>' +
+    '<p class="sub" style="margin-top:12px">보낼 내용</p><textarea class="send" id="sendText" readonly>' + esc(R.text) + '</textarea>' +
+    '<button class="btn sub2" data-a="again" style="margin-top:14px">같은 회차 다시 풀기</button></div>';
+  $('app').innerHTML = h;
+}
+async function doShare() {
+  const text = S.res.text;
+  if (navigator.share) {
+    try { await navigator.share({ text: text }); toast('공유창이 열렸어요. 선생님 채팅방을 골라 보내요'); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  await doCopy(true);
+}
+async function doCopy(fromShare) {
+  let ok = false;
+  try { if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(S.res.text); ok = true; } } catch (e) {}
+  if (!ok) { const ta = $('sendText'); if (ta) { ta.focus(); ta.select(); try { ok = document.execCommand('copy'); } catch (e) {} } }
+  toast(ok ? (fromShare === true ? '복사했어요. 카카오톡에 붙여넣어 보내요' : '복사했어요') : '복사가 안 돼요. 아래 내용을 길게 눌러 직접 복사해요');
+}
+function showSaved(n) {
+  const m = loadSaved()[n];
+  if (m) openResult(n, m.ts, m.ans);
+}
+
+/* ---------- 이벤트 ---------- */
+const ACT = {
+  logout: logout,
+  home: function () { go('home'); },
+  start: function (el) { startExam(+el.dataset.n, false); },
+  view: function (el) { showSaved(+el.dataset.n); },
+  tab: function (el) { S.tab = +el.dataset.t; paint(); window.scrollTo(0, 0); },
+  pick: function (el) { pick(+el.dataset.q, +el.dataset.o); },
+  grade: function () { grade(false); },
+  gradeNow: function () { grade(true); },
+  keep: function () { S.blankAsk = false; paintBar(); },
+  share: doShare,
+  copy: doCopy,
+  again: function () { startExam(S.res.examNo, true); }
+};
+document.addEventListener('click', function (e) {
+  const el = e.target.closest ? e.target.closest('[data-a]') : null;
+  if (el && ACT[el.dataset.a]) ACT[el.dataset.a](el);
+});
+document.addEventListener('submit', function (e) {
+  if (e.target && e.target.id === 'lf') { e.preventDefault(); doLogin(); }
+});
+vLogin();
+</script>
+</body>
+</html>
