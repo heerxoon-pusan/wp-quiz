@@ -4,102 +4,136 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>워드프로세서 기출 채점</title>
+<meta name="theme-color" content="#16803C">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E">
+<title>워드프로세서 합격반 with 황정훈 선생님</title>
 <style>
+/* 그린 & 화이트 테마 (변수 이름은 기존 그대로: --blue = 대표색(초록)) */
 :root{
-  --bg:#F3F4F8; --card:#FFFFFF; --ink:#1B2440; --ink2:#5A6478; --line:#D5DAE5;
-  --blue:#2A52D0; --onblue:#FFFFFF; --red:#C9302A; --redbg:#FBE5E3; --green:#1C7C54; --greenbg:#DDF2E7;
-  --amber:#8A5A00; --amberbg:#FFF0BF; --bubble:#1B2440; --onbubble:#FFFFFF;
+  --bg:#F2FBF5; --card:#FFFFFF; --ink:#1E3B2A; --ink2:#5F7D6A; --line:#CDE8D5;
+  --blue:#16803C; --onblue:#FFFFFF; --red:#D2453D; --redbg:#FDE7E5; --green:#16803C; --greenbg:#DDF5E4;
+  --amber:#8A5A00; --amberbg:#FFF3C4; --bubble:#16803C; --onbubble:#FFFFFF;
+  --mint:#E3F7E9; --lime:#C9F0A8; --deep:#0E5A29;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#12161F; --card:#1B2130; --ink:#E9ECF4; --ink2:#A2ABBD; --line:#333C50;
-    --blue:#8AA8FF; --onblue:#10162A; --red:#FF8F87; --redbg:#3A1F1F; --green:#6FD6A4; --greenbg:#173528;
-    --amber:#FFD666; --amberbg:#3F3208; --bubble:#E9ECF4; --onbubble:#12161F;
+    --bg:#0F1A14; --card:#17261D; --ink:#E6F4EA; --ink2:#9DB8A6; --line:#2C4636;
+    --blue:#5FD08A; --onblue:#082514; --red:#FF8F87; --redbg:#3A1F1F; --green:#6FD6A4; --greenbg:#173528;
+    --amber:#FFD666; --amberbg:#3F3208; --bubble:#5FD08A; --onbubble:#082514;
+    --mint:#1D3327; --lime:#3B5A2A; --deep:#2E8F55;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#12161F; --card:#1B2130; --ink:#E9ECF4; --ink2:#A2ABBD; --line:#333C50;
-  --blue:#8AA8FF; --onblue:#10162A; --red:#FF8F87; --redbg:#3A1F1F; --green:#6FD6A4; --greenbg:#173528;
-  --amber:#FFD666; --amberbg:#3F3208; --bubble:#E9ECF4; --onbubble:#12161F;
+  --bg:#0F1A14; --card:#17261D; --ink:#E6F4EA; --ink2:#9DB8A6; --line:#2C4636;
+  --blue:#5FD08A; --onblue:#082514; --red:#FF8F87; --redbg:#3A1F1F; --green:#6FD6A4; --greenbg:#173528;
+  --amber:#FFD666; --amberbg:#3F3208; --bubble:#5FD08A; --onbubble:#082514;
+  --mint:#1D3327; --lime:#3B5A2A; --deep:#2E8F55;
 }
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+body{background-image:radial-gradient(var(--line) 1.6px,transparent 1.7px);background-size:24px 24px}
 button,input,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .wrap{max-width:520px;margin:0 auto;padding:12px 14px 180px}
 .top{display:flex;justify-content:space-between;align-items:center;min-height:44px}
-.who{color:var(--ink2);font-size:14px}
-h1{font-size:22px;line-height:1.3;margin:8px 0 4px}
-h2{font-size:17px;margin:22px 0 8px}
+.who{color:var(--blue);background:var(--mint);border:2px solid var(--line);border-radius:99px;padding:2px 12px;font-size:14px;font-weight:800}
+h1{font-size:22px;line-height:1.3;margin:12px 0 4px}
+h2{font-size:17px;margin:24px 0 8px}
+h2::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--blue);margin-right:8px;vertical-align:1px}
 h3{font-size:16px;margin:0}
 .sub{margin:0 0 12px;color:var(--ink2);font-size:14px}
-.link{background:none;border:0;color:var(--blue);padding:10px 0;min-height:44px;font-size:15px;cursor:pointer}
-.btn{display:block;width:100%;min-height:50px;border:0;border-radius:10px;background:var(--blue);color:var(--onblue);font-weight:700;cursor:pointer;padding:0 16px}
-.btn.sub2{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-.btn+.btn{margin-top:8px}
+.link{background:none;border:0;color:var(--blue);padding:10px 0;min-height:44px;font-size:15px;font-weight:700;cursor:pointer}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:16px;background:var(--blue);color:var(--onblue);font-weight:800;cursor:pointer;padding:0 16px;box-shadow:0 4px 0 var(--deep);transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--deep)}
+.btn.sub2{background:var(--card);color:var(--blue);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.sub2:active{box-shadow:0 1px 0 var(--line)}
+.btn+.btn{margin-top:12px}
 .btn:disabled{opacity:.5}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 10px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:14px;margin:0 0 12px;box-shadow:0 3px 0 var(--line)}
 .card.off{opacity:.55}
-.login{max-width:360px;margin:9vh auto 0;padding:0 18px}
-.login label{display:block;font-weight:700;font-size:14px;margin:16px 0 4px}
-.login input{width:100%;min-height:48px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:18px}
-.err{color:var(--red);font-size:14px;min-height:1.4em;margin:10px 0 0}
+
+/* ---- 첫 화면: 합격반 소개 (선생님 + 남학생/여학생) ---- */
+.hero{position:relative;text-align:center;background:linear-gradient(180deg,var(--mint) 0%,var(--card) 100%);border:2px solid var(--line);border-radius:28px;padding:22px 14px 0;overflow:hidden;box-shadow:0 5px 0 var(--line)}
+.hero::before{content:"\2726";position:absolute;left:16px;top:14px;color:var(--blue);font-size:20px;opacity:.55}
+.hero::after{content:"\2605";position:absolute;right:18px;top:62px;color:var(--lime);font-size:26px;text-shadow:0 0 0 var(--blue)}
+.hero .badge{display:inline-block;background:var(--blue);color:var(--onblue);font-size:13px;font-weight:800;padding:3px 12px;border-radius:99px}
+.hero .title{margin:8px 0 8px;font-size:32px;line-height:1.2;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+.hero .title span{background:linear-gradient(transparent 60%,var(--lime) 60%);padding:0 4px}
+.hero .with{display:inline-block;background:var(--card);border:2px dashed var(--blue);color:var(--blue);border-radius:99px;padding:4px 16px;font-weight:800;font-size:15px}
+.hero .kids{display:flex;justify-content:center;align-items:flex-end;margin-top:10px}
+.hero .kids svg{display:block;width:46%;max-width:170px;height:auto}
+.hero .kids svg+svg{margin-left:-4px}
+.hero.mini{display:flex;align-items:flex-end;justify-content:space-between;text-align:left;padding:14px 8px 0 16px;margin:6px 0 4px}
+.hero.mini::before,.hero.mini::after{display:none}
+.hero.mini .ht{padding-bottom:14px}
+.hero.mini .title{font-size:22px;line-height:1.25;margin:6px 0 8px}
+.hero.mini .with{font-size:13px;padding:2px 12px}
+.hero.mini .kids{margin:0;flex-shrink:0}
+.hero.mini .kids svg{width:74px}
+
+.login{max-width:380px;margin:3vh auto 0;padding:0 18px}
+.login .lcard{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:4px 16px 18px;margin-top:14px;box-shadow:0 4px 0 var(--line)}
+.login label{display:block;font-weight:800;font-size:14px;margin:14px 0 4px}
+.login input{width:100%;min-height:50px;padding:8px 14px;border:2px solid var(--line);border-radius:16px;background:var(--bg);font-size:18px}
+.login input:focus{border-color:var(--blue);outline:none;background:var(--card)}
+.err{color:var(--red);font-size:14px;font-weight:700;min-height:1.4em;margin:10px 0 0}
 .ex{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .ex b{font-size:17px}
 .ex small{display:block;color:var(--ink2)}
-.ex .btns{display:flex;gap:6px;flex-shrink:0}
-.ex .btns .btn{width:auto;min-height:44px;padding:0 14px;margin:0}
+.ex .btns{display:flex;gap:8px;flex-shrink:0}
+.ex .btns .btn{width:auto;min-height:44px;padding:0 16px;margin:0;border-radius:14px}
 .tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;display:flex;gap:6px;background:var(--bg);padding:8px 0}
-.tabs button{flex:1;min-height:52px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;line-height:1.25;font-size:13px;padding:4px 2px}
-.tabs button b{display:block;font-size:15px}
-.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.sect{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tabs button{flex:1;min-height:54px;border:2px solid var(--line);border-radius:16px;background:var(--card);cursor:pointer;line-height:1.25;font-size:13px;padding:4px 2px;color:var(--ink2)}
+.tabs button b{display:block;font-size:15px;color:var(--ink)}
+.tabs button[aria-selected=true]{background:var(--blue);color:var(--onblue);border-color:var(--blue);box-shadow:0 3px 0 var(--deep)}
+.tabs button[aria-selected=true] b{color:var(--onblue)}
+.sect{background:var(--card);border:2px solid var(--line);border-radius:20px;overflow:hidden}
 .row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--line)}
-.row:nth-child(5n){border-bottom:2px solid var(--ink2)}
+.row:nth-child(5n){border-bottom:2px solid var(--blue)}
 .row:last-child{border-bottom:0}
-.row .n{width:30px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.row .n{width:30px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums;color:var(--blue)}
 .row .opts{flex:1;display:flex;justify-content:space-around}
-.o{width:46px;height:46px;border-radius:50%;border:2px solid var(--ink2);background:transparent;font-size:19px;cursor:pointer;padding:0;line-height:1}
-.o[aria-pressed=true]{background:var(--bubble);color:var(--onbubble);border-color:var(--bubble)}
-.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
+.o{width:46px;height:46px;border-radius:50%;border:2px solid var(--ink2);background:transparent;font-size:19px;cursor:pointer;padding:0;line-height:1;transition:transform .08s}
+.o:active{transform:scale(.92)}
+.o[aria-pressed=true]{background:var(--bubble);color:var(--onbubble);border-color:var(--bubble);box-shadow:0 2px 0 var(--deep)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:2px solid var(--line);border-radius:22px 22px 0 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px))}
 .bar .in{max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px}
-.bar .cnt{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.bar .cnt{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap;color:var(--blue)}
 .bar .btn{margin:0}
 .bar .ask{flex:1;font-size:14px}
 .bar .two{display:flex;gap:8px;margin-top:8px}
 .bar .two .btn{min-height:44px;margin:0}
 .score{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.avg{font-size:44px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
-.avg small{font-size:20px;font-weight:700}
-.vd{font-weight:700;padding:2px 12px;border-radius:99px;font-size:14px}
+.avg{font-size:46px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--blue)}
+.avg small{font-size:20px;font-weight:800}
+.vd{font-weight:800;padding:2px 14px;border-radius:99px;font-size:14px}
 .vd.ok{background:var(--greenbg);color:var(--green)}
 .vd.mid{background:var(--amberbg);color:var(--amber)}
 .vd.bad{background:var(--redbg);color:var(--red)}
 .subj{display:grid;grid-template-columns:1fr 46px;gap:2px 10px;align-items:center;margin-top:12px;font-size:14px}
-.subj .tr{grid-column:1/3;height:10px;border-radius:5px;background:var(--line);overflow:hidden;position:relative;margin-bottom:6px}
-.subj .tr i{display:block;height:100%;background:var(--ink)}
+.subj .tr{grid-column:1/3;height:12px;border-radius:6px;background:var(--mint);overflow:hidden;position:relative;margin-bottom:6px}
+.subj .tr i{display:block;height:100%;background:var(--blue);border-radius:6px}
 .subj .tr i.f{background:var(--red)}
 .subj .tr b{position:absolute;top:0;bottom:0;width:2px;background:var(--card)}
-.subj .sv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.subj .sv{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
 .headline{font-size:17px;line-height:1.5;margin:0}
-.cc{border-left:5px solid var(--red)}
+.cc{border-left:6px solid var(--red)}
 .cc h3{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .cc .c{font-size:13px;font-weight:400;color:var(--ink2);white-space:nowrap}
 .cc .qs{margin:6px 0 2px;color:var(--ink2);font-size:14px}
-.cc .pg{margin:6px 0 0;font-size:18px;font-weight:800}
+.cc .pg{margin:6px 0 0;font-size:18px;font-weight:800;color:var(--blue)}
 .cc .pg.none{font-size:15px;font-weight:700;color:var(--amber)}
 .cc ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--ink2)}
 .cc .note{margin:6px 0 0;font-size:13px;color:var(--amber)}
-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:800}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-th{white-space:nowrap}
+th{white-space:nowrap;color:var(--blue)}
 td.c{text-align:center;white-space:nowrap}
-textarea.send{width:100%;min-height:150px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:13px;line-height:1.5;resize:vertical}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;max-width:90vw;text-align:center}
+textarea.send{width:100%;min-height:150px;padding:10px;border:2px solid var(--line);border-radius:16px;background:var(--card);font-size:13px;line-height:1.5;resize:vertical}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--deep);color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;max-width:90vw;text-align:center}
 #toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -397,6 +431,41 @@ const WPQ = (function () {
 const S = { view: 'login', user: null, examNo: null, ans: [], tab: 0, res: null, blankAsk: false };
 const $ = function (id) { return document.getElementById(id); };
 const CIRC = '①②③④';
+
+/* ---------- 귀여운 학생 캐릭터 (남학생/여학생) ---------- */
+const KID_BOY =
+  '<svg class="boy" viewBox="0 0 120 150" aria-hidden="true" focusable="false">' +
+  '<path d="M16 118 C8 104 6 92 12 84" stroke="#22A85A" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="12" cy="80" r="7.5" fill="#FFE3C8"/>' +
+  '<path d="M14 150 C14 112 34 100 60 100 C86 100 106 112 106 150Z" fill="#22A85A"/>' +
+  '<rect x="52" y="88" width="16" height="16" rx="6" fill="#FFD9B8"/>' +
+  '<path d="M43 101 L60 120 L77 101 Z" fill="#fff"/><path d="M55 117 L65 117 L67 133 L60 140 L53 133Z" fill="#0E5A29"/>' +
+  '<circle cx="27" cy="66" r="6.5" fill="#FFD9B8"/><circle cx="93" cy="66" r="6.5" fill="#FFD9B8"/>' +
+  '<circle cx="60" cy="62" r="34" fill="#FFE3C8"/>' +
+  '<path d="M25 62 C20 28 44 18 62 20 C82 20 100 32 95 62 C90 48 82 42 70 40 C58 46 40 46 30 52 C28 55 26 58 25 62Z" fill="#3A2A22"/>' +
+  '<path d="M57 22 C53 11 65 7 69 14 C65 14 63 18 63 22Z" fill="#3A2A22"/>' +
+  '<circle cx="46" cy="68" r="4.5" fill="#2A211D"/><circle cx="74" cy="68" r="4.5" fill="#2A211D"/>' +
+  '<circle cx="47.6" cy="66.4" r="1.6" fill="#fff"/><circle cx="75.6" cy="66.4" r="1.6" fill="#fff"/>' +
+  '<ellipse cx="37" cy="78" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/><ellipse cx="83" cy="78" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/>' +
+  '<path d="M53 79 Q60 88 67 79" fill="none" stroke="#7A3B2E" stroke-width="3" stroke-linecap="round"/>' +
+  '</svg>';
+const KID_GIRL =
+  '<svg class="girl" viewBox="0 0 120 150" aria-hidden="true" focusable="false">' +
+  '<path d="M104 118 C112 104 114 92 108 84" stroke="#BFE5CB" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="108" cy="80" r="7.5" fill="#FFE3C8"/>' +
+  '<path d="M20 66 C16 26 44 16 60 16 C78 16 104 26 100 66 L102 104 C102 113 96 115 90 113 L30 113 C24 115 18 113 18 104Z" fill="#4A2F25"/>' +
+  '<path d="M14 150 C14 112 34 100 60 100 C86 100 106 112 106 150Z" fill="#fff" stroke="#BFE5CB" stroke-width="3"/>' +
+  '<rect x="52" y="88" width="16" height="16" rx="6" fill="#FFD9B8"/>' +
+  '<path d="M40 102 L60 126 L80 102 L92 111 L60 140 L28 111Z" fill="#22A85A"/>' +
+  '<path d="M60 126 L49 119 L49 133Z M60 126 L71 119 L71 133Z" fill="#C9F0A8"/><circle cx="60" cy="126" r="3.5" fill="#0E5A29"/>' +
+  '<circle cx="27" cy="66" r="6.5" fill="#FFD9B8"/><circle cx="93" cy="66" r="6.5" fill="#FFD9B8"/>' +
+  '<circle cx="60" cy="62" r="34" fill="#FFE3C8"/>' +
+  '<path d="M25 62 C20 28 44 18 62 20 C82 20 100 32 95 62 C90 44 78 36 60 38 C46 40 32 48 25 62Z" fill="#4A2F25"/>' +
+  '<path d="M84 30 L96 22 L96 38Z M84 30 L72 22 L72 38Z" fill="#22A85A"/><circle cx="84" cy="30" r="4" fill="#0E5A29"/>' +
+  '<circle cx="46" cy="69" r="4.5" fill="#2A211D"/><circle cx="74" cy="69" r="4.5" fill="#2A211D"/>' +
+  '<circle cx="47.6" cy="67.4" r="1.6" fill="#fff"/><circle cx="75.6" cy="67.4" r="1.6" fill="#fff"/>' +
+  '<path d="M39 63 L43 66 M81 63 L77 66" stroke="#2A211D" stroke-width="2" stroke-linecap="round"/>' +
+  '<ellipse cx="37" cy="79" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/><ellipse cx="83" cy="79" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/>' +
+  '<path d="M53 80 Q60 89 67 80" fill="none" stroke="#7A3B2E" stroke-width="3" stroke-linecap="round"/>' +
+  '</svg>';
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -425,10 +494,13 @@ function render() { ({ login: vLogin, home: vHome, input: vInput, result: vResul
 /* ---------- 로그인 ---------- */
 function vLogin(msg) {
   $('app').innerHTML =
-    '<form class="login" id="lf"><h1>워드프로세서 기출 채점</h1><p class="sub">번호와 비밀번호를 넣고 들어와요.</p>' +
+    '<form class="login" id="lf"><div class="hero"><span class="badge">방과후 자격증반</span>' +
+    '<div class="title"><span>워드프로세서</span><br>합격반</div><div class="with">with. 황정훈 선생님</div>' +
+    '<div class="kids">' + KID_BOY + KID_GIRL + '</div></div>' +
+    '<div class="lcard"><p class="sub" style="margin-top:14px">번호와 비밀번호를 넣고 들어와요.</p>' +
     '<label for="uid">번호</label><input id="uid" inputmode="numeric" autocomplete="username" maxlength="3">' +
     '<label for="upw">비밀번호 (숫자 4자리)</label><input id="upw" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8">' +
-    '<button class="btn" type="submit" style="margin-top:20px">들어가기</button><p class="err" id="err">' + esc(msg || '') + '</p></form>';
+    '<button class="btn" type="submit" style="margin-top:20px">들어가기</button><p class="err" id="err">' + esc(msg || '') + '</p></div></form>';
 }
 function doLogin() {
   const id = parseInt($('uid').value, 10), pin = $('upw').value.trim();
@@ -443,6 +515,9 @@ function logout() { S.user = null; S.res = null; go('login'); }
 function vHome() {
   const saved = loadSaved();
   let h = '<div class="wrap"><div class="top"><span class="who">' + S.user.id + '번 학생</span><button class="link" data-a="logout">로그아웃</button></div>' +
+    '<div class="hero mini"><div class="ht"><span class="badge">방과후 자격증반</span>' +
+    '<div class="title"><span>워드프로세서</span><br>합격반</div><div class="with">with. 황정훈 선생님</div></div>' +
+    '<div class="kids">' + KID_BOY + KID_GIRL + '</div></div>' +
     '<h1>어느 회차를 풀었나요?</h1><p class="sub">시험지를 풀고 고른 답을 입력하면 바로 채점해 줘요.</p>';
   for (let n = 1; n <= DATA.examCount; n++) {
     const ex = DATA.exams[n];
