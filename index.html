@@ -136,6 +136,19 @@ textarea.send{width:100%;min-height:150px;padding:10px;border:2px solid var(--li
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--deep);color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9;max-width:90vw;text-align:center}
 #toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+/* 초록 체크무늬 & 대나무 장식 */
+.hero .check{height:16px;margin:0 -14px;background:
+  conic-gradient(var(--deep) 25%,var(--card) 0 50%,var(--deep) 0 75%,var(--card) 0) 0 0/16px 16px;opacity:.9}
+.hero .bamboo{position:absolute;bottom:16px;width:22px;height:78%;pointer-events:none;z-index:0}
+.hero .bamboo.l{left:6px}.hero .bamboo.r{right:6px}
+.hero .kids,.hero .ht,.hero .badge,.hero .title,.hero .with{position:relative;z-index:1}
+.hero.mini .bamboo{display:none}
+.hero.mini .check{margin:0 -8px 0 -16px;height:12px;background-size:12px 12px}
+.hero.mini{flex-wrap:wrap}
+.hero.mini .ht{flex:1}
+.hero.mini .check{flex-basis:100%;order:3}
+.hero .badge::before{content:"\1F38B ";}
 </style>
 </head>
 <body>
@@ -432,6 +445,10 @@ const S = { view: 'login', user: null, examNo: null, ans: [], tab: 0, res: null,
 const $ = function (id) { return document.getElementById(id); };
 const CIRC = '①②③④';
 
+const BAMBOO =
+  '<svg class="bamboo l" viewBox="0 0 22 200" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="5" y="0" width="12" height="200" rx="6" fill="#7BD389"/><g stroke="#16803C" stroke-width="3" stroke-linecap="round"><path d="M4 42h14M4 98h14M4 154h14"/></g></svg>' +
+  '<svg class="bamboo r" viewBox="0 0 22 200" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="5" y="0" width="12" height="200" rx="6" fill="#9FE3A8"/><g stroke="#16803C" stroke-width="3" stroke-linecap="round"><path d="M4 30h14M4 84h14M4 140h14"/></g></svg>';
+
 /* ---------- 귀여운 학생 캐릭터 (남학생/여학생) ---------- */
 const KID_BOY =
   '<svg class="boy" viewBox="0 0 120 150" aria-hidden="true" focusable="false">' +
@@ -494,10 +511,10 @@ function render() { ({ login: vLogin, home: vHome, input: vInput, result: vResul
 /* ---------- 로그인 ---------- */
 function vLogin(msg) {
   $('app').innerHTML =
-    '<form class="login" id="lf"><div class="hero"><span class="badge">방과후 자격증반</span>' +
+    '<form class="login" id="lf"><div class="hero">' + BAMBOO + '<span class="badge">방과후 자격증반</span>' +
     '<div class="title"><span>워드프로세서</span><br>합격반</div><div class="with">with. 황정훈 선생님</div>' +
-    '<div class="kids">' + KID_BOY + KID_GIRL + '</div></div>' +
-    '<div class="lcard"><p class="sub" style="margin-top:14px">번호와 비밀번호를 넣고 들어와요.</p>' +
+    '<div class="kids">' + KID_BOY + KID_GIRL + '</div><div class="check"></div></div>' +
+    '<div class="lcard"><p class="sub" style="margin-top:14px">번호와 비밀번호를 입력해주세요.</p>' +
     '<label for="uid">번호</label><input id="uid" inputmode="numeric" autocomplete="username" maxlength="3">' +
     '<label for="upw">비밀번호 (숫자 4자리)</label><input id="upw" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8">' +
     '<button class="btn" type="submit" style="margin-top:20px">들어가기</button><p class="err" id="err">' + esc(msg || '') + '</p></div></form>';
@@ -517,7 +534,7 @@ function vHome() {
   let h = '<div class="wrap"><div class="top"><span class="who">' + S.user.id + '번 학생</span><button class="link" data-a="logout">로그아웃</button></div>' +
     '<div class="hero mini"><div class="ht"><span class="badge">방과후 자격증반</span>' +
     '<div class="title"><span>워드프로세서</span><br>합격반</div><div class="with">with. 황정훈 선생님</div></div>' +
-    '<div class="kids">' + KID_BOY + KID_GIRL + '</div></div>' +
+    '<div class="kids">' + KID_BOY + KID_GIRL + '</div><div class="check"></div></div>' +
     '<h1>어느 회차를 풀었나요?</h1><p class="sub">시험지를 풀고 고른 답을 입력하면 바로 채점해 줘요.</p>';
   for (let n = 1; n <= DATA.examCount; n++) {
     const ex = DATA.exams[n];
