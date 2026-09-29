@@ -60,7 +60,7 @@ h3{font-size:16px;margin:0}
 .hero::after{content:"\2605";position:absolute;right:18px;top:62px;color:var(--lime);font-size:26px;text-shadow:0 0 0 var(--blue)}
 .hero .badge{display:inline-block;background:var(--blue);color:var(--onblue);font-size:13px;font-weight:800;padding:3px 12px;border-radius:99px}
 .hero .title{margin:8px 0 8px;font-size:32px;line-height:1.2;font-weight:900;color:var(--ink);letter-spacing:-.02em}
-.hero .title span{background:linear-gradient(transparent 60%,var(--lime) 60%);padding:0 4px}
+
 .hero .with{display:inline-block;background:var(--card);border:2px dashed var(--blue);color:var(--blue);border-radius:99px;padding:4px 16px;font-weight:800;font-size:15px}
 .hero .kids{display:flex;justify-content:center;align-items:flex-end;margin-top:10px}
 .hero .kids svg{display:block;width:46%;max-width:170px;height:auto}
@@ -137,18 +137,24 @@ textarea.send{width:100%;min-height:150px;padding:10px;border:2px solid var(--li
 #toast.show{opacity:1}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 
-/* 초록 체크무늬 & 대나무 장식 */
-.hero .check{height:16px;margin:0 -14px;background:
-  conic-gradient(var(--deep) 25%,var(--card) 0 50%,var(--deep) 0 75%,var(--card) 0) 0 0/16px 16px;opacity:.9}
-.hero .bamboo{position:absolute;bottom:16px;width:22px;height:78%;pointer-events:none;z-index:0}
-.hero .bamboo.l{left:6px}.hero .bamboo.r{right:6px}
 .hero .kids,.hero .ht,.hero .badge,.hero .title,.hero .with{position:relative;z-index:1}
-.hero.mini .bamboo{display:none}
-.hero.mini .check{margin:0 -8px 0 -16px;height:12px;background-size:12px 12px}
 .hero.mini{flex-wrap:wrap}
 .hero.mini .ht{flex:1}
-.hero.mini .check{flex-basis:100%;order:3}
-.hero .badge::before{content:"\1F38B ";}
+
+/* 노트 표지 스타일 (스프링 + 두꺼운 외곽선 + 이름표 + 하단 바) */
+.hero{border:3px solid var(--ink);box-shadow:0 5px 0 var(--ink);padding-top:30px;overflow:visible}
+.hero::before,.hero::after{content:none}
+.hero.mini{padding-top:14px}
+.rings{position:absolute;left:0;right:0;top:-15px;display:flex;justify-content:center;gap:14px;z-index:2;pointer-events:none}
+.rings svg{width:26px;height:26px;flex-shrink:0}
+.hero.mini .rings{display:none}
+.hero .badge{display:none}
+.nameplate{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:3px solid var(--ink);border-radius:99px;padding:5px 18px;font-weight:800;font-size:14px;color:var(--ink)}
+.title .line2{display:block;color:var(--blue)}
+.hero .kids{position:relative;margin-top:22px}
+.bulb{position:absolute;left:50%;top:-14px;transform:translateX(-50%);width:36px;z-index:2}
+.hero .bandbar{margin:14px -14px 0;background:var(--blue);color:var(--onblue);display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;font-weight:800;font-size:15px;border-top:3px solid var(--ink)}
+.hero.mini .with{border:2px solid var(--ink);background:var(--card);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -445,43 +451,48 @@ const S = { view: 'login', user: null, examNo: null, ans: [], tab: 0, res: null,
 const $ = function (id) { return document.getElementById(id); };
 const CIRC = '①②③④';
 
-const BAMBOO =
-  '<svg class="bamboo l" viewBox="0 0 22 200" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="5" y="0" width="12" height="200" rx="6" fill="#7BD389"/><g stroke="#16803C" stroke-width="3" stroke-linecap="round"><path d="M4 42h14M4 98h14M4 154h14"/></g></svg>' +
-  '<svg class="bamboo r" viewBox="0 0 22 200" preserveAspectRatio="none" aria-hidden="true" focusable="false"><rect x="5" y="0" width="12" height="200" rx="6" fill="#9FE3A8"/><g stroke="#16803C" stroke-width="3" stroke-linecap="round"><path d="M4 30h14M4 84h14M4 140h14"/></g></svg>';
+const RINGS = Array.from({length:7}).map(function(){
+  return '<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">' +
+    '<circle cx="20" cy="20" r="13" fill="none" stroke="#1E3B2A" stroke-width="6"/>' +
+    '<circle cx="20" cy="20" r="13" fill="none" stroke="#5FD08A" stroke-width="2"/></svg>';
+}).join('');
+const BULB =
+  '<svg class="bulb" viewBox="0 0 60 70" aria-hidden="true" focusable="false">' +
+  '<path d="M16 6 L12 0 M44 6 L48 0 M30 0 L30 -6 M8 16 L2 14 M52 16 L58 14" stroke="#1E3B2A" stroke-width="3" stroke-linecap="round"/>' +
+  '<circle cx="30" cy="28" r="20" fill="#FFE9A8" stroke="#1E3B2A" stroke-width="3"/>' +
+  '<rect x="22" y="44" width="16" height="10" rx="3" fill="#D9DDE3" stroke="#1E3B2A" stroke-width="3"/>' +
+  '<path d="M24 22 Q30 14 36 22" stroke="#1E3B2A" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+  '</svg>';
 
 /* ---------- 귀여운 학생 캐릭터 (남학생/여학생) ---------- */
 const KID_BOY =
   '<svg class="boy" viewBox="0 0 120 150" aria-hidden="true" focusable="false">' +
-  '<path d="M16 118 C8 104 6 92 12 84" stroke="#22A85A" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="12" cy="80" r="7.5" fill="#FFE3C8"/>' +
-  '<path d="M14 150 C14 112 34 100 60 100 C86 100 106 112 106 150Z" fill="#22A85A"/>' +
-  '<rect x="52" y="88" width="16" height="16" rx="6" fill="#FFD9B8"/>' +
-  '<path d="M43 101 L60 120 L77 101 Z" fill="#fff"/><path d="M55 117 L65 117 L67 133 L60 140 L53 133Z" fill="#0E5A29"/>' +
-  '<circle cx="27" cy="66" r="6.5" fill="#FFD9B8"/><circle cx="93" cy="66" r="6.5" fill="#FFD9B8"/>' +
-  '<circle cx="60" cy="62" r="34" fill="#FFE3C8"/>' +
-  '<path d="M25 62 C20 28 44 18 62 20 C82 20 100 32 95 62 C90 48 82 42 70 40 C58 46 40 46 30 52 C28 55 26 58 25 62Z" fill="#3A2A22"/>' +
-  '<path d="M57 22 C53 11 65 7 69 14 C65 14 63 18 63 22Z" fill="#3A2A22"/>' +
-  '<circle cx="46" cy="68" r="4.5" fill="#2A211D"/><circle cx="74" cy="68" r="4.5" fill="#2A211D"/>' +
-  '<circle cx="47.6" cy="66.4" r="1.6" fill="#fff"/><circle cx="75.6" cy="66.4" r="1.6" fill="#fff"/>' +
-  '<ellipse cx="37" cy="78" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/><ellipse cx="83" cy="78" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/>' +
-  '<path d="M53 79 Q60 88 67 79" fill="none" stroke="#7A3B2E" stroke-width="3" stroke-linecap="round"/>' +
+  '<path d="M14 150 C14 110 34 98 60 98 C86 98 106 110 106 150Z" fill="#22A85A" stroke="#1E3B2A" stroke-width="3.5" stroke-linejoin="round"/>' +
+  '<path d="M43 99 L60 122 L77 99 Z" fill="#fff" stroke="#1E3B2A" stroke-width="3"/>' +
+  '<path d="M55 117 L65 117 L67 134 L60 141 L53 134Z" fill="#0E5A29" stroke="#1E3B2A" stroke-width="2.5" stroke-linejoin="round"/>' +
+  '<rect x="51" y="86" width="18" height="18" rx="7" fill="#FFD9B8"/>' +
+  '<circle cx="25" cy="66" r="7" fill="#FFD9B8" stroke="#1E3B2A" stroke-width="3"/><circle cx="95" cy="66" r="7" fill="#FFD9B8" stroke="#1E3B2A" stroke-width="3"/>' +
+  '<circle cx="60" cy="62" r="35" fill="#FFE3C8" stroke="#1E3B2A" stroke-width="3.5"/>' +
+  '<path d="M23 60 C18 24 44 14 62 16 C84 16 102 30 97 60 C92 44 82 38 70 36 C58 42 38 42 28 50 C26 53 24 56 23 60Z" fill="#1E1B18" stroke="#1E3B2A" stroke-width="3" stroke-linejoin="round"/>' +
+  '<circle cx="45" cy="68" r="4.5" fill="#1E1B18"/><circle cx="75" cy="68" r="4.5" fill="#1E1B18"/>' +
+  '<ellipse cx="35" cy="79" rx="6.5" ry="4.5" fill="#FF9FA0" opacity=".75"/><ellipse cx="85" cy="79" rx="6.5" ry="4.5" fill="#FF9FA0" opacity=".75"/>' +
+  '<path d="M50 80 Q60 89 70 80" fill="none" stroke="#1E3B2A" stroke-width="3" stroke-linecap="round"/>' +
   '</svg>';
 const KID_GIRL =
-  '<svg class="girl" viewBox="0 0 120 150" aria-hidden="true" focusable="false">' +
-  '<path d="M104 118 C112 104 114 92 108 84" stroke="#BFE5CB" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="108" cy="80" r="7.5" fill="#FFE3C8"/>' +
-  '<path d="M20 66 C16 26 44 16 60 16 C78 16 104 26 100 66 L102 104 C102 113 96 115 90 113 L30 113 C24 115 18 113 18 104Z" fill="#4A2F25"/>' +
-  '<path d="M14 150 C14 112 34 100 60 100 C86 100 106 112 106 150Z" fill="#fff" stroke="#BFE5CB" stroke-width="3"/>' +
-  '<rect x="52" y="88" width="16" height="16" rx="6" fill="#FFD9B8"/>' +
-  '<path d="M40 102 L60 126 L80 102 L92 111 L60 140 L28 111Z" fill="#22A85A"/>' +
-  '<path d="M60 126 L49 119 L49 133Z M60 126 L71 119 L71 133Z" fill="#C9F0A8"/><circle cx="60" cy="126" r="3.5" fill="#0E5A29"/>' +
-  '<circle cx="27" cy="66" r="6.5" fill="#FFD9B8"/><circle cx="93" cy="66" r="6.5" fill="#FFD9B8"/>' +
-  '<circle cx="60" cy="62" r="34" fill="#FFE3C8"/>' +
-  '<path d="M25 62 C20 28 44 18 62 20 C82 20 100 32 95 62 C90 44 78 36 60 38 C46 40 32 48 25 62Z" fill="#4A2F25"/>' +
-  '<path d="M84 30 L96 22 L96 38Z M84 30 L72 22 L72 38Z" fill="#22A85A"/><circle cx="84" cy="30" r="4" fill="#0E5A29"/>' +
-  '<circle cx="46" cy="69" r="4.5" fill="#2A211D"/><circle cx="74" cy="69" r="4.5" fill="#2A211D"/>' +
-  '<circle cx="47.6" cy="67.4" r="1.6" fill="#fff"/><circle cx="75.6" cy="67.4" r="1.6" fill="#fff"/>' +
-  '<path d="M39 63 L43 66 M81 63 L77 66" stroke="#2A211D" stroke-width="2" stroke-linecap="round"/>' +
-  '<ellipse cx="37" cy="79" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/><ellipse cx="83" cy="79" rx="6" ry="4" fill="#FF9FA0" opacity=".7"/>' +
-  '<path d="M53 80 Q60 89 67 80" fill="none" stroke="#7A3B2E" stroke-width="3" stroke-linecap="round"/>' +
+  '<svg class="girl" viewBox="0 -14 120 164" aria-hidden="true" focusable="false">' +
+  '<path d="M98 94 C110 74 108 50 92 30" stroke="#22A85A" stroke-width="16" stroke-linecap="round" fill="none" stroke-linejoin="round"/>' +
+  '<path d="M98 94 C110 74 108 50 92 30" stroke="#1E3B2A" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+  '<circle cx="90" cy="26" r="10" fill="#FFD9B8" stroke="#1E3B2A" stroke-width="3"/>' +
+  '<path d="M20 66 C16 24 44 12 60 12 C78 12 104 24 100 66 L102 104 C102 113 96 115 90 113 L30 113 C24 115 18 113 18 104Z" fill="#3A281F" stroke="#1E3B2A" stroke-width="3.5" stroke-linejoin="round"/>' +
+  '<path d="M14 150 C14 110 34 98 60 98 C86 98 106 110 106 150Z" fill="#fff" stroke="#1E3B2A" stroke-width="3.5" stroke-linejoin="round"/>' +
+  '<rect x="51" y="86" width="18" height="18" rx="7" fill="#FFD9B8"/>' +
+  '<path d="M39 100 L60 126 L81 100 L94 110 L60 141 L26 110Z" fill="#22A85A" stroke="#1E3B2A" stroke-width="3" stroke-linejoin="round"/>' +
+  '<circle cx="25" cy="66" r="7" fill="#FFD9B8" stroke="#1E3B2A" stroke-width="3"/><circle cx="95" cy="66" r="7" fill="#FFD9B8" stroke="#1E3B2A" stroke-width="3"/>' +
+  '<circle cx="60" cy="62" r="35" fill="#FFE3C8" stroke="#1E3B2A" stroke-width="3.5"/>' +
+  '<path d="M23 60 C18 24 44 14 62 16 C84 16 102 30 97 60 C92 42 78 32 60 34 C44 36 30 46 23 60Z" fill="#3A281F" stroke="#1E3B2A" stroke-width="3" stroke-linejoin="round"/>' +
+  '<circle cx="45" cy="69" r="4.5" fill="#1E1B18"/><circle cx="75" cy="69" r="4.5" fill="#1E1B18"/>' +
+  '<ellipse cx="35" cy="80" rx="6.5" ry="4.5" fill="#FF9FA0" opacity=".75"/><ellipse cx="85" cy="80" rx="6.5" ry="4.5" fill="#FF9FA0" opacity=".75"/>' +
+  '<path d="M50 81 Q60 90 70 81" fill="none" stroke="#1E3B2A" stroke-width="3" stroke-linecap="round"/>' +
   '</svg>';
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -511,10 +522,12 @@ function render() { ({ login: vLogin, home: vHome, input: vInput, result: vResul
 /* ---------- 로그인 ---------- */
 function vLogin(msg) {
   $('app').innerHTML =
-    '<form class="login" id="lf"><div class="hero">' + BAMBOO + '<span class="badge">방과후 자격증반</span>' +
-    '<div class="title"><span>워드프로세서</span><br>합격반</div><div class="with">with. 황정훈 선생님</div>' +
-    '<div class="kids">' + KID_BOY + KID_GIRL + '</div><div class="check"></div></div>' +
-    '<div class="lcard"><p class="sub" style="margin-top:14px">번호와 비밀번호를 입력해주세요.</p>' +
+    '<form class="login" id="lf"><div class="hero"><div class="rings">' + RINGS + '</div>' +
+    '<span class="nameplate">방과후 자격증반</span>' +
+    '<div class="title">워드프로세서<br><span class="line2">합격반</span></div>' +
+    '<div class="kids">' + BULB + KID_BOY + KID_GIRL + '</div>' +
+    '<div class="bandbar">with. 황정훈 선생님</div></div>' +
+    '<div class="lcard"><p class="sub" style="margin-top:14px">번호와 비밀번호 입력주세요.</p>' +
     '<label for="uid">번호</label><input id="uid" inputmode="numeric" autocomplete="username" maxlength="3">' +
     '<label for="upw">비밀번호 (숫자 4자리)</label><input id="upw" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8">' +
     '<button class="btn" type="submit" style="margin-top:20px">들어가기</button><p class="err" id="err">' + esc(msg || '') + '</p></div></form>';
@@ -532,9 +545,9 @@ function logout() { S.user = null; S.res = null; go('login'); }
 function vHome() {
   const saved = loadSaved();
   let h = '<div class="wrap"><div class="top"><span class="who">' + S.user.id + '번 학생</span><button class="link" data-a="logout">로그아웃</button></div>' +
-    '<div class="hero mini"><div class="ht"><span class="badge">방과후 자격증반</span>' +
-    '<div class="title"><span>워드프로세서</span><br>합격반</div><div class="with">with. 황정훈 선생님</div></div>' +
-    '<div class="kids">' + KID_BOY + KID_GIRL + '</div><div class="check"></div></div>' +
+    '<div class="hero mini"><div class="ht"><span class="nameplate">방과후 자격증반</span>' +
+    '<div class="title">워드프로세서<br><span class="line2">합격반</span></div><div class="with">with. 황정훈 선생님</div></div>' +
+    '<div class="kids">' + KID_BOY + KID_GIRL + '</div></div>' +
     '<h1>어느 회차를 풀었나요?</h1><p class="sub">시험지를 풀고 고른 답을 입력하면 바로 채점해 줘요.</p>';
   for (let n = 1; n <= DATA.examCount; n++) {
     const ex = DATA.exams[n];
