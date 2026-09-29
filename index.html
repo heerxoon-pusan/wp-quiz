@@ -119,7 +119,10 @@ h3{font-size:16px;margin:0}
 .subj .tr i.f{background:var(--red)}
 .subj .tr b{position:absolute;top:0;bottom:0;width:2px;background:var(--card)}
 .subj .sv{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
-.headline{font-size:17px;line-height:1.5;margin:0}
+.headline{font-size:15px;line-height:1.6;margin:0 0 10px}
+.headline:first-child{font-size:17px;font-weight:800}
+.headline:last-child{margin-bottom:0}
+.headline.cheer{color:var(--blue);font-weight:700}
 .cc{border-left:6px solid var(--red)}
 .cc h3{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .cc .c{font-size:13px;font-weight:400;color:var(--ink2);white-space:nowrap}
@@ -275,17 +278,43 @@ const WPQ = (function () {
   function studentFeedback(a) {
     const rank = conceptRank([{ examNo: a.examNo, perQ: a.perQ }]);
     let headline;
-    if (a.wrongCount === 0) headline = '만점이에요. 아주 잘했어요!';
-    else if (a.fails.length) {
-      headline = a.fails.map(function (i) { return D.subjects[i].name + ' ' + a.scores[i] + '점'; }).join(', ') +
-        '이(가) 과락선(' + R.passMin + '점) 아래예요. 이 과목의 개념부터 먼저 잡아 보세요.';
+    if (a.wrongCount === 0) {
+      headline = [
+        '만점이에요! 60문항을 전부 맞혔어요 — 정말 대단해요.',
+        '이 정도 실력이면 실제 시험장에서도 충분히 합격할 수 있는 수준이에요. 다만 시험은 매번 다른 문제로 나오니, 방심하지 말고 다른 회차도 몇 개 더 풀어보면서 감을 유지하는 걸 추천해요.',
+        '지금처럼 꾸준히 하면 자격증은 이미 따 놓은 셈이에요. 계속 이 페이스를 유지해 봐요!'
+      ];
+    } else if (a.fails.length) {
+      const failList = a.fails.map(function (i) { return D.subjects[i].name + ' ' + a.scores[i] + '점'; }).join(', ');
+      headline = [
+        failList + '이(가) 과락선(' + R.passMin + '점) 아래예요.',
+        '이 자격증 시험은 평균 점수가 아무리 높아도 세 과목 중 단 한 과목이라도 ' + R.passMin + '점 미만이면 무조건 불합격 처리돼요. 그래서 지금은 평균을 올리는 것보다 과락 과목부터 확실히 끌어올리는 게 훨씬 중요해요.',
+        '아래 "먼저 공부할 개념" 카드에 오답이 많은 순서대로 정리해 뒀어요. 위에서부터 학습지 쪽수를 펴서 개념을 확인하고, 그 개념이 나온 다른 회차 문제도 함께 풀어보면 훨씬 빨리 익힐 수 있어요.',
+        '처음엔 과락이 나와도 전혀 이상한 게 아니에요. 틀린 개념을 하나씩 채워가다 보면 금방 따라잡을 수 있어요. 포기하지 말고 한 걸음씩 나아가 봐요!'
+      ];
     } else if (a.pass) {
       const m = r1(a.avg - R.passAvg);
-      headline = m < 5
-        ? '평균 ' + fmt(a.avg) + '점으로 합격선을 넘었지만 여유가 ' + fmt(m) + '점뿐이에요.'
-        : '평균 ' + fmt(a.avg) + '점으로 합격선보다 ' + fmt(m) + '점 위예요.';
+      if (m < 5) {
+        headline = [
+          '평균 ' + fmt(a.avg) + '점으로 합격선을 넘었지만 여유가 ' + fmt(m) + '점밖에 안 남았어요.',
+          '지금 컨디션으로는 합격이지만, 실제 시험에서 문제가 조금만 까다롭게 나오거나 실수를 몇 개만 더 해도 순식간에 불합격으로 뒤집힐 수 있는 아슬아슬한 점수예요.',
+          '아래 오답 개념들을 꼼꼼히 다시 보면서, 특히 여러 문항에서 반복해서 틀린 개념 위주로 학습지를 펴서 확실히 다져두세요. 안전하게 합격하려면 평균 10점 이상의 여유를 만들어 두는 게 좋아요.',
+          '여기까지 온 것만으로도 잘하고 있는 거예요. 남은 여유분만 조금 더 만들면 확실한 합격이니, 마지막까지 힘내 봐요!'
+        ];
+      } else {
+        headline = [
+          '평균 ' + fmt(a.avg) + '점으로 합격선보다 ' + fmt(m) + '점 위예요. 안정적인 점수대예요.',
+          '지금 이 상태로 시험을 봐도 좋은 결과가 기대돼요. 그래도 틀린 문항의 개념은 한 번씩 훑어보면서 사소한 실수를 줄이는 연습을 해두면 더 안전해요.',
+          '꾸준히 잘하고 있어요! 이 페이스만 유지하면 합격은 어렵지 않을 거예요. 계속 화이팅!'
+        ];
+      }
     } else {
-      headline = '평균 ' + fmt(a.avg) + '점, 합격선(' + R.passAvg + '점)까지 ' + fmt(R.passAvg - a.avg) + '점 남았어요.';
+      headline = [
+        '평균 ' + fmt(a.avg) + '점, 합격선(' + R.passAvg + '점)까지 ' + fmt(R.passAvg - a.avg) + '점 남았어요.',
+        '다행히 과락(한 과목이라도 ' + R.passMin + '점 미만)은 없어요. 지금은 어느 한 과목이 특별히 약한 게 아니라, 세 과목 전체적으로 조금씩만 더 올리면 합격권에 들어올 수 있는 상태예요.',
+        '아래 "먼저 공부할 개념"에서 가장 많이 틀린 것부터 순서대로 채워 나가세요. 특히 여러 문항에서 반복해서 나온 개념을 우선순위로 잡으면 같은 노력으로 점수가 더 빨리 올라가요.',
+        '합격까지 얼마 남지 않았어요. 지금 틀린 것들만 제대로 잡고 넘어가면 다음번엔 충분히 넘을 수 있어요. 화이팅!'
+      ];
     }
     return { headline: headline, top: rank.slice(0, 3), more: Math.max(0, rank.length - 3), all: rank };
   }
@@ -634,7 +663,9 @@ function vResult() {
     h += '<span>' + (i + 1) + '과목 ' + esc(s.name) + ' (' + s.correct + '/' + s.total + ')</span><span class="sv">' + s.score + '점</span>' +
       '<div class="tr"><i class="' + (s.score < DATA.rule.passMin ? 'f' : '') + '" style="width:' + s.score + '%"></i><b style="left:' + DATA.rule.passMin + '%"></b></div>';
   });
-  h += '</div></div><div class="card"><p class="headline">' + esc(fb.headline) + '</p></div>';
+  h += '</div></div><div class="card">' + fb.headline.map(function (t, i) {
+    return '<p class="headline' + (i === fb.headline.length - 1 ? ' cheer' : '') + '">' + esc(t) + '</p>';
+  }).join('') + '</div>';
 
   if (fb.top.length) {
     h += '<h2>먼저 공부할 개념</h2>';
@@ -661,10 +692,9 @@ function vResult() {
       }).join('') + '</tbody></table></details>';
   }
 
-  h += '<h2>선생님께 결과 보내기</h2><p class="sub">아래 버튼을 누르고, 카카오톡에서 선생님 채팅방을 골라 보내요. 맨 아래 코드는 지우지 마세요.</p>' +
-    '<button class="btn" data-a="share">카카오톡으로 보내기</button><button class="btn sub2" data-a="copy">내용 복사하기</button>' +
-    '<p class="sub" style="margin-top:12px">보낼 내용</p><textarea class="send" id="sendText" readonly>' + esc(R.text) + '</textarea>' +
-    '<button class="btn sub2" data-a="again" style="margin-top:14px">같은 회차 다시 풀기</button></div>';
+  h += '<h2>선생님께 결과 보내기</h2><p class="sub">아래 버튼을 눌러 복사한 뒤, 카카오톡에서 선생님 채팅방에 붙여넣어 보내요. 맨 아래 코드는 지우지 마세요.</p>' +
+    '<button class="btn sub2" data-a="copy">내용 복사하기</button>' +
+    '<p class="sub" style="margin-top:12px">보낼 내용</p><textarea class="send" id="sendText" readonly>' + esc(R.text) + '</textarea></div>';
   $('app').innerHTML = h;
 }
 async function doShare() {
